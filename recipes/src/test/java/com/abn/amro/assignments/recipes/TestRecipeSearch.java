@@ -169,7 +169,7 @@ public class TestRecipeSearch {
 	@Test
 	public void searchRecipeServings() {
 		List<SearchCriteria> searchCriteriaList = new ArrayList<>();
-		SearchCriteria criteria = new SearchCriteria("type", "gt", 2);
+		SearchCriteria criteria = new SearchCriteria("numOfServings", "gt", 2);
 		
 		searchCriteriaList.add(criteria);
 		RecipeSearchBean searchBean = new RecipeSearchBean();
@@ -182,13 +182,13 @@ public class TestRecipeSearch {
 				);
 		System.out.println("recipe list --> "+ recipesList);
 		Map<String, Object> content = (Map)recipesList.getBody();
-		List<Map<String, String>> contentList= (List)content.get("content");
+		List<Map<String, Object>> contentList= (List)content.get("content");
 		
 		assertThat(contentList.size()).isEqualTo(2);
-		assertThat(contentList.get(0).get("numOfServings")).isGreaterThan("2");
+		assertThat((Integer)contentList.get(0).get("numOfServings")).isGreaterThan(2);
 		
 		
-		criteria = new SearchCriteria("type", "ge", 2);
+		criteria = new SearchCriteria("numOfServings", "ge", 2);
 		searchCriteriaList = new ArrayList<>();
 		searchCriteriaList.add(criteria);
 		searchBean = new RecipeSearchBean();
@@ -204,10 +204,10 @@ public class TestRecipeSearch {
 		contentList= (List)content.get("content");
 		
 		assertThat(contentList.size()).isEqualTo(3);
-		assertThat(contentList.get(0).get("numOfServings")).isGreaterThanOrEqualTo("2");
+		assertThat((Integer)contentList.get(0).get("numOfServings")).isGreaterThanOrEqualTo(2);
 		
 		
-		criteria = new SearchCriteria("type", "eq", 2);
+		criteria = new SearchCriteria("numOfServings", "eq", "");
 		searchCriteriaList = new ArrayList<>();
 		searchCriteriaList.add(criteria);
 		searchBean = new RecipeSearchBean();
@@ -223,7 +223,7 @@ public class TestRecipeSearch {
 		contentList= (List)content.get("content");
 		
 		assertThat(contentList.size()).isEqualTo(1);
-		assertThat(contentList.get(0).get("numOfServings")).isEqualTo("2");
+		assertThat((Integer)contentList.get(0).get("numOfServings")).isEqualTo(2);
 		assertThat(contentList.get(0).get("type")).isEqualTo("Vegan");
 		
 	}
