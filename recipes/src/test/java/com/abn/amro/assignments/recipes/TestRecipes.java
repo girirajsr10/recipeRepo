@@ -200,8 +200,7 @@ public class TestRecipes {
 		Map<String, Object> content = (Map)recipesList.getBody();
 		List<Map<String, String>> contentList= (List)content.get("content");
 		assertThat(contentList.size()).isGreaterThan(0);
-		
-		this.restTemplate.delete("http://localhost:"+port+"/recipe/"+id, requestEntity);
+		this.restTemplate.exchange("http://localhost:"+port+"/recipe/"+id, HttpMethod.DELETE, requestEntity, String.class);
 		
 		recipesList = this.restTemplate.postForEntity("http://localhost:"+port+"/recipe/search",
 				 searchRequestEntity, Object.class
