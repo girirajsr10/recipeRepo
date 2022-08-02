@@ -10,6 +10,4 @@ public interface UserService {
 	
 	UserBean createUsers(UserBean bean);
 	
-	UserBean login(UserBean bean);
-	
 }

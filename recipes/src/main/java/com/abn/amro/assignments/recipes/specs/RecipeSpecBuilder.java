@@ -39,12 +39,14 @@ public class RecipeSpecBuilder {
                    new RecipeSpec(params.get(0));
         for (int idx = 1; idx < params.size(); idx++){
             SearchCriteria criteria = params.get(idx);
-            result =  SearchOperation.getDataOption(criteria
-                     .getDataOption()) == SearchOperation.ALL
-                     ? Specification.where(result).and(new    
-                    		 RecipeSpec(criteria))
-                     : Specification.where(result).or(
-                       new RecipeSpec(criteria));
+            
+            	result =  SearchOperation.getDataOption(criteria
+            			.getDataOption()) == SearchOperation.ALL
+            			? Specification.where(result).and(new    
+            					RecipeSpec(criteria))
+            					: Specification.where(result).or(
+            							new RecipeSpec(criteria));
+            	
         }
         return result;
     }

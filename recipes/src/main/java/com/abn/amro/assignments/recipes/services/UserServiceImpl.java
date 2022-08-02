@@ -52,13 +52,6 @@ public class UserServiceImpl implements UserService{
 		log.info("User creation successful!");
 		return bean;
 	}
-
-	@Override
-	public UserBean login(UserBean bean) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 	
 	
 }
