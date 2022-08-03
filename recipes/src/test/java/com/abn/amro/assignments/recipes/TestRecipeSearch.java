@@ -99,10 +99,12 @@ public class TestRecipeSearch {
 		steps.add("NewData taxi");
 		steps.add("NewData gas");
 		steps.add("NewData oven");
+		recipeBean.setSteps(steps);
 		ingredientsList = new ArrayList<>();
 		ingredientsList.add("Almond");
 		ingredientsList.add("Water");
 		ingredientsList.add("mew");
+		recipeBean.setIngridients(ingredientsList);
 		recipeBean.setType("non Veg");
 		requestEntity = new HttpEntity<>(recipeBean, headers);
 		createRecipeResponse = this.restTemplate.postForEntity("http://localhost:"+port+"/recipe", requestEntity, RecipeBean.class, "");
@@ -115,6 +117,7 @@ public class TestRecipeSearch {
 		ingredientsList.add("random");
 		recipeBean.setNumOfServings(4);
 		recipeBean.setRecipeName("Recipe4");
+		recipeBean.setIngridients(ingredientsList);
 		recipeBean.setType("Paleo");
 		requestEntity = new HttpEntity<>(recipeBean, headers);
 		createRecipeResponse = this.restTemplate.postForEntity("http://localhost:"+port+"/recipe", requestEntity, RecipeBean.class, "");
@@ -207,7 +210,7 @@ public class TestRecipeSearch {
 		assertThat((Integer)contentList.get(0).get("numOfServings")).isGreaterThanOrEqualTo(2);
 		
 		
-		criteria = new SearchCriteria("numOfServings", "eq", "");
+		criteria = new SearchCriteria("numOfServings", "eq", 2);
 		searchCriteriaList = new ArrayList<>();
 		searchCriteriaList.add(criteria);
 		searchBean = new RecipeSearchBean();
@@ -224,8 +227,196 @@ public class TestRecipeSearch {
 		
 		assertThat(contentList.size()).isEqualTo(1);
 		assertThat((Integer)contentList.get(0).get("numOfServings")).isEqualTo(2);
-		assertThat(contentList.get(0).get("type")).isEqualTo("Vegan");
+		assertThat(contentList.get(0).get("recipeName")).isEqualTo("Recipe1");
 		
 	}
 	
+	@Test
+	public void searchRecipeSteps() {
+		List<SearchCriteria> searchCriteriaList = new ArrayList<>();
+		SearchCriteria criteria = new SearchCriteria("instructions", "cn", "oven");
+		
+		searchCriteriaList.add(criteria);
+		RecipeSearchBean searchBean = new RecipeSearchBean();
+		searchBean.setDataOption("all");
+		searchBean.setSearchList(searchCriteriaList);
+		HttpEntity<RecipeSearchBean> searchRequestEntity = new HttpEntity<>(searchBean, headers);
+ 
+		ResponseEntity<Object> recipesList = this.restTemplate.postForEntity("http://localhost:"+port+"/recipe/search",
+				 searchRequestEntity, Object.class
+				);
+		System.out.println("recipe list --> "+ recipesList);
+		Map<String, Object> content = (Map)recipesList.getBody();
+		List<Map<String, Object>> contentList= (List)content.get("content");
+		
+		assertThat(contentList.size()).isEqualTo(2);
+		assertThat(contentList.get(0).get("recipeName")).isEqualTo("Recipe3");
+		assertThat(contentList.get(1).get("recipeName")).isEqualTo("Recipe4");
+		
+		
+//		criteria = new SearchCriteria("numOfServings", "ge", 2);
+//		searchCriteriaList = new ArrayList<>();
+//		searchCriteriaList.add(criteria);
+//		searchBean = new RecipeSearchBean();
+//		searchBean.setDataOption("all");
+//		searchBean.setSearchList(searchCriteriaList);
+//		searchRequestEntity = new HttpEntity<>(searchBean, headers);
+// 
+//		recipesList = this.restTemplate.postForEntity("http://localhost:"+port+"/recipe/search",
+//				 searchRequestEntity, Object.class
+//				);
+//		
+//		content = (Map)recipesList.getBody();
+//		contentList= (List)content.get("content");
+//		
+//		assertThat(contentList.size()).isEqualTo(3);
+//		assertThat((Integer)contentList.get(0).get("numOfServings")).isGreaterThanOrEqualTo(2);
+//		
+//		
+//		criteria = new SearchCriteria("numOfServings", "eq", 2);
+//		searchCriteriaList = new ArrayList<>();
+//		searchCriteriaList.add(criteria);
+//		searchBean = new RecipeSearchBean();
+//		searchBean.setDataOption("all");
+//		searchBean.setSearchList(searchCriteriaList);
+//		searchRequestEntity = new HttpEntity<>(searchBean, headers);
+// 
+//		recipesList = this.restTemplate.postForEntity("http://localhost:"+port+"/recipe/search",
+//				 searchRequestEntity, Object.class
+//				);
+//		
+//		content = (Map)recipesList.getBody();
+//		contentList= (List)content.get("content");
+//		
+//		assertThat(contentList.size()).isEqualTo(1);
+//		assertThat((Integer)contentList.get(0).get("numOfServings")).isEqualTo(2);
+//		assertThat(contentList.get(0).get("recipeName")).isEqualTo("Recipe1");
+		
+	}
+	
+	@Test
+	public void searchRecipeIngredients() {
+		List<SearchCriteria> searchCriteriaList = new ArrayList<>();
+		SearchCriteria criteria = new SearchCriteria("ingredients", "cn", "Almond");
+		
+		searchCriteriaList.add(criteria);
+		RecipeSearchBean searchBean = new RecipeSearchBean();
+		searchBean.setDataOption("all");
+		searchBean.setSearchList(searchCriteriaList);
+		HttpEntity<RecipeSearchBean> searchRequestEntity = new HttpEntity<>(searchBean, headers);
+ 
+		ResponseEntity<Object> recipesList = this.restTemplate.postForEntity("http://localhost:"+port+"/recipe/search",
+				 searchRequestEntity, Object.class
+				);
+		System.out.println("recipe list --> "+ recipesList);
+		Map<String, Object> content = (Map)recipesList.getBody();
+		List<Map<String, Object>> contentList= (List)content.get("content");
+		
+		assertThat(contentList.size()).isEqualTo(1);
+		assertThat(contentList.get(0).get("recipeName")).isEqualTo("Recipe3");
+		
+		
+		criteria = new SearchCriteria("ingredients", "cn", "carrot");
+		searchCriteriaList = new ArrayList<>();
+		searchCriteriaList.add(criteria);
+		searchBean = new RecipeSearchBean();
+		searchBean.setDataOption("all");
+		searchBean.setSearchList(searchCriteriaList);
+		searchRequestEntity = new HttpEntity<>(searchBean, headers);
+ 
+		recipesList = this.restTemplate.postForEntity("http://localhost:"+port+"/recipe/search",
+				 searchRequestEntity, Object.class
+				);
+		
+		content = (Map)recipesList.getBody();
+		contentList= (List)content.get("content");
+		
+		assertThat(contentList.size()).isEqualTo(2);
+//		
+//		
+//		criteria = new SearchCriteria("numOfServings", "eq", 2);
+//		searchCriteriaList = new ArrayList<>();
+//		searchCriteriaList.add(criteria);
+//		searchBean = new RecipeSearchBean();
+//		searchBean.setDataOption("all");
+//		searchBean.setSearchList(searchCriteriaList);
+//		searchRequestEntity = new HttpEntity<>(searchBean, headers);
+// 
+//		recipesList = this.restTemplate.postForEntity("http://localhost:"+port+"/recipe/search",
+//				 searchRequestEntity, Object.class
+//				);
+//		
+//		content = (Map)recipesList.getBody();
+//		contentList= (List)content.get("content");
+//		
+//		assertThat(contentList.size()).isEqualTo(1);
+//		assertThat((Integer)contentList.get(0).get("numOfServings")).isEqualTo(2);
+//		assertThat(contentList.get(0).get("recipeName")).isEqualTo("Recipe1");
+		
+	}
+	
+	@Test
+	public void searchRecipeIngredientsAndNumberOfServings() {
+		List<SearchCriteria> searchCriteriaList = new ArrayList<>();
+		SearchCriteria criteria = new SearchCriteria("ingredients", "cn", "carrot");
+		SearchCriteria criteria2 = new SearchCriteria("numOfServings", "lt", 3);
+		
+		searchCriteriaList.add(criteria);
+		searchCriteriaList.add(criteria2);
+		RecipeSearchBean searchBean = new RecipeSearchBean();
+		searchBean.setDataOption("all");
+		searchBean.setSearchList(searchCriteriaList);
+		HttpEntity<RecipeSearchBean> searchRequestEntity = new HttpEntity<>(searchBean, headers);
+ 
+		ResponseEntity<Object> recipesList = this.restTemplate.postForEntity("http://localhost:"+port+"/recipe/search",
+				 searchRequestEntity, Object.class
+				);
+		System.out.println("recipe list --> "+ recipesList);
+		Map<String, Object> content = (Map)recipesList.getBody();
+		List<Map<String, Object>> contentList= (List)content.get("content");
+		
+		assertThat(contentList.size()).isEqualTo(1);
+		assertThat(contentList.get(0).get("recipeName")).isEqualTo("Recipe1");
+		
+		
+		criteria = new SearchCriteria("ingredients", "cn", "Mango");
+		criteria2 = new SearchCriteria("numOfServings", "le", 3);
+		searchCriteriaList = new ArrayList<>();
+		searchCriteriaList.add(criteria);
+		searchCriteriaList.add(criteria2);
+		searchBean = new RecipeSearchBean();
+		searchBean.setDataOption("all");
+		searchBean.setSearchList(searchCriteriaList);
+		searchRequestEntity = new HttpEntity<>(searchBean, headers);
+ 
+		recipesList = this.restTemplate.postForEntity("http://localhost:"+port+"/recipe/search",
+				 searchRequestEntity, Object.class
+				);
+		
+		content = (Map)recipesList.getBody();
+		contentList= (List)content.get("content");
+		
+		assertThat(contentList.size()).isEqualTo(0);
+//		
+//		
+//		criteria = new SearchCriteria("numOfServings", "eq", 2);
+//		searchCriteriaList = new ArrayList<>();
+//		searchCriteriaList.add(criteria);
+//		searchBean = new RecipeSearchBean();
+//		searchBean.setDataOption("all");
+//		searchBean.setSearchList(searchCriteriaList);
+//		searchRequestEntity = new HttpEntity<>(searchBean, headers);
+// 
+//		recipesList = this.restTemplate.postForEntity("http://localhost:"+port+"/recipe/search",
+//				 searchRequestEntity, Object.class
+//				);
+//		
+//		content = (Map)recipesList.getBody();
+//		contentList= (List)content.get("content");
+//		
+//		assertThat(contentList.size()).isEqualTo(1);
+//		assertThat((Integer)contentList.get(0).get("numOfServings")).isEqualTo(2);
+//		assertThat(contentList.get(0).get("recipeName")).isEqualTo("Recipe1");
+		
+	}
 }
